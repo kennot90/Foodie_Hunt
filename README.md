@@ -122,21 +122,26 @@ For the collection ‘restaurants’, data from ‘restaurants’, ‘zomatos’
 **Embedded Data**
 Embedded document capture relationships between data by storing related data in a single document structure. As we know, MongoDB documents make it possible to embed document structures in a field or array within a document. These denormalized data models allow us to retrieve and manipulate related data in a single database operation during business analysis. 
 ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/5.png)
-Figure – 6 Embedded Data Model       
+Figure – 6 Embedded Data Model
+
 We have used three embedded data models as below in our ‘restaurants’ collection: 
 1.	Embedded sub-document 1: Splitting original ‘address’ column into four parts, which are ‘street’, ‘extended_add’, ‘country’, ‘postal_code’, and combining them with original ‘postal_code’, ‘latitude’ and ‘longitude’ into this sub-document.
 2.	Embedded sub-document 2: Combing original ‘rating_atmosphere’,                                  
  ‘rating_food’, ‘rating_service’ and ‘rating_value’ into this sub-document.
 3.	Embedded sub-document 3: As our original ‘meal’ value only contains six types value, which are ‘breakfast’, ‘lunch’, ‘dinner’, ‘after-hours’, ‘drinks’ and ‘brunch’. So, we used them to represent what type of meal the restaurant can offer, for example, if it has ‘breakfast’ in original ‘meal’ value, then this column will be ‘Y’, otherwise, it will be empty.
 **Normalized Data**
-As we can see from the previous total schema diagram, there are some relationships between different collections. Therefore, we         have normalized our data to describe one-to-one or one-to many relationships using references between collections, which can provide more flexibility than embedding. For the detail relationships between them are as left.     
+As we can see from the previous total schema diagram, there are some relationships between different collections. Therefore, we         have normalized our data to describe one-to-one or one-to many relationships using references between collections, which can provide more flexibility than embedding. For the detail relationships between them are as left.
+
 ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/6.png)
 Figure – 7 Normalized Data Model  
+
 **Indexing**
 Similar to SQL database, Indexes support the efficient execution of queries in MongoDB. Without index, MongoDB must perform a collection scan, like scanning every document in a collection, to select those documents that match the query statement, which will produce a huge amount of time consuming when the volume of data is very large. If an appropriate index exists for a query, MongoDB can use the index to limit the number of documents it must inspect. In addition, MongoDB can return sorted results by using the ordering in the index.
 Based on what we will query during doing business analysis in Tableau, several indexes as below have been created to support our efficient equality matches and range-based query operations.
+
 ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/7.png)
 Figure – 8 Create Index
+
 ### 6.4 MapReduce and NLP
 **MapReduce**
 The MapReduce paradigm helps in parallel and distributed batch processing of documents in MongoDB and suitable in cases wherein it is complicated to obtain the same aggregated result set using simple queries. MR in MongoDB groups similar Keys K in (K,V) and allows custom aggregation on the Values V. It was used to compute the I. review count across subzones with details on the top 10 restaurants in each subzone. II. Review count across cuisines and the top 10 restaurants serving those cuisines.
