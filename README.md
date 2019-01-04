@@ -67,6 +67,7 @@ For scraping restaurants from Zomato, we assume that the overall rating displaye
 ## 5.	WEBSCRAPING METHODS
 ### 5.1 Web Scraping Techniques
 |   |  | 
+| ------------- | ------------- | 
 | Selenium | – Google Reviews | 
 | Beautiful Soup & Requests | – Trip Advisor, OneMap API, EventBrite API, Zomato | 
 ### 5.2 Web Scraping Details
@@ -83,7 +84,7 @@ EventBrite API
 Eventbrite has exposed an API that allow us to scrape data from their website and we have used the parameters as shown in (Appendix A4). As mentioned earlier, we have the longitude and latitude of each restaurant. As such, by placing these values into EventBrite API, we are able to obtain the nearby events for each restaurant during this 3-year time frame. 
 According to response values of API, we can only get the ‘Restaurant-Event’ relationship like Figure - 3. However, this relationship obtained will not be useful for our analysis. As such, we implemented a mapping function to remap the relationship as below.
             
-                                  Figure – 2 Original Relationship                                             Figure – 3 New Relationship
+                          Figure – 2 Original Relationship                                             Figure – 3 New Relationship
 With the mapping function, we have obtained the following data which is to be directly imported into MongoDB as shown in (Appendix A5).
 Google Reviews
 Initially we tried to use BeautifulSoup to extract the information (user ratings and user votes) from the tags. However, we realized that Google has ‘cloaking’ mechanisms to misguide the scraper service from the browser-based content. To overcome this issue, we used Selenium to simulate an actual browser interaction with the webpages and mouse hover and clicks to mimic a human, create artificial delays (using system sleep) and retrieve the data. Though we scraped from the same site – Facebook and HungryGoWhere ratings as well, their count and impact on the list of restaurants were negligible and were ignored in the analysis stage.
@@ -91,12 +92,15 @@ Zomato
 We scraped the restaurant details of restaurants available in Singapore. The list had a total of 8,580 restaurants, with each webpage having details for 15 restaurants. Data collected is shown in (Appendix A6).
 ### 5.3 Data Summary
 Based on what we have discussed above, the total number of records we have got from each website are as below.
-Data Source	Home Page	Data Type	Total No. of Records
-TripAdvisor	https://www.tripadvisor.com.sg/Restaurants	Restaurant	8,400
-		Review and customer	136,203
-EventBrite API	https://www.eventbrite.sg/	Event	329
-Zomato	https://www.zomato.com/singapore	Restaurant	8,580
-Google Reviews	https://www.google.com/	Rating of Restaurant	672
+
+| Data Source | Home Page | Data Type | Total No. of Records |
+| ------------- | ------------- | ------------- | ------------- |  
+| TripAdvisor | https://www.tripadvisor.com.sg/Restaurants | Restaurant | 8,400 |
+| |  | Review and customer | 136,203 |
+| EventBrite API | https://www.eventbrite.sg/ | Event | 329 |
+| Zomato | https://www.zomato.com/singapore | Restaurant | 8,580 |
+| Google Reviews | https://www.google.com/ | Rating of Restaurant | 672 |
+
 Table 2 – Data Summary
 
 ## 6.	MONGODB INTEGRATION DETAILS
@@ -110,7 +114,7 @@ We have coded a python script using package ‘pymongo’ to implement this and 
 ### 6.3 Production Database
 Bases on our business analysis and insight discovery’s requirements later, the total schema diagram has been designed. There are four original collections which load data from the staging database directly, with different schema structures.
 For the collection ‘restaurants’, data from ‘restaurants’, ‘zomatos’ and ‘google_ratings’ is merged in staging database into one single collection. The collection ‘reviews’ in staging database has been split into two collections, namely ‘customers’ and ‘reviews’. No change is made to ‘events’ collection. It is another data layer for which same data structure is synchronized directly. There are another two collections named ‘mr_cuisines’ and ‘nlp_sentiment_analysis’. The ‘mr_cuisines’ collection, is obtained by refactoring the data in the original collections using MapReduce. The ‘nlp_sentiment_analysis’ collection is a result of the NLP Analysis which is discussed in next section.                                                                                                                                              
-Embedded Data
+**Embedded Data**
 Embedded document capture relationships between data by storing related data in a single document structure. As we know, MongoDB documents make it possible to embed document structures in a field or array within a document. These denormalized data models allow us to retrieve and manipulate related data in a single database operation during business analysis. 
 We have used three embedded data models as below in our ‘restaurants’ collection: 
 1.	Embedded sub-document 1: Splitting original ‘address’ column into four parts, which are ‘street’, ‘extended_add’, ‘country’, ‘postal_code’, and combining them with original ‘postal_code’, ‘latitude’ and ‘longitude’ into this sub-document.
@@ -126,9 +130,9 @@ Based on what we will query during doing business analysis in Tableau, several i
  
 Figure – 8 Create Index
 ### 6.4 MapReduce and NLP
-MapReduce
+**MapReduce**
 The MapReduce paradigm helps in parallel and distributed batch processing of documents in MongoDB and suitable in cases wherein it is complicated to obtain the same aggregated result set using simple queries. MR in MongoDB groups similar Keys K in (K,V) and allows custom aggregation on the Values V. It was used to compute the I. review count across subzones with details on the top 10 restaurants in each subzone. II. Review count across cuisines and the top 10 restaurants serving those cuisines.
-NLP
+**NLP**
 When dealing with unstructured text data, Natural Language Processing (NLP) can be done to get several use cases and insights can be drawn from the same. The objective of this analysis is to get the polarity of the reviews and analyse the polarity trends across restaurants. 
 We are using python’s VADER (Valence Aware Dictionary and Sentiment Reasoner) package. VADER sentiment analysis is based on lexicons of sentiment-related words and produces four sentiment metrics. We are considering only three out of four namely, positive, negative and neutral. It represents the proportion of the text that falls into these categories.
 All the reviews were passed through this package to get the metrics values and was stored into a newer collection in the MongoDB. This data was then pulled on to the tableau dashboard for analysis.
@@ -137,11 +141,11 @@ Sharding has been used in our case to improve the scalability, availability and 
 By distributing data across multiple machines, it allows deployment with very large dataset and high throughput operations. It improves scalability, availability and manageability of the database. The steps taken are in the Appendix B1.
 ### 6.6 Archiving
 Currently, there are more than 150 thousand and 200 thousand lines of record in our staging and production database respectively, and they will grow quickly when insert new reviews of these restaurants. And it is also very time-consuming for the database to query the latest timestamp before starting new web scrapping and ETL jobs. Last but not least, without some strategy for managing the size of our database, most event logging systems can grow infinitely. Therefore, it is particularly important to determine some archiving strategies to avoid these problems, two different levels of archiving strategy as below are used in our staging database:
-1)	Renaming collections: As in our staging database, the ‘reviews’ and ‘events’ collection may grow to a large scale of arrays during web scrapping in the future. It is necessary to rename the collections periodically when the data of it has been loaded into our production database, and only use the collections that have not been renamed each time, so that our data collections can rotate in much the same way with rotating log files.
-2)	Using capped collections: As we know, capped collections have a fixed size, and drop old data when inserting new data after reaching cap. Therefore, except the first strategy, to guarantee the reasonable usage of storage resources, capped collections have been configured to drop the oldest collection automatically from the staging database.
+1)	**Renaming collections**: As in our staging database, the ‘reviews’ and ‘events’ collection may grow to a large scale of arrays during web scrapping in the future. It is necessary to rename the collections periodically when the data of it has been loaded into our production database, and only use the collections that have not been renamed each time, so that our data collections can rotate in much the same way with rotating log files.
+2)	**Using capped collections**: As we know, capped collections have a fixed size, and drop old data when inserting new data after reaching cap. Therefore, except the first strategy, to guarantee the reasonable usage of storage resources, capped collections have been configured to drop the oldest collection automatically from the staging database.
 However, depending on our data retention requirements as well as our reporting and analytics needs, any data should not be dropped based on time, so we will not use pervious two strategies directly in our production database. A very import archiving step has been considered for it, which is restoring those data will not be used in different collections, for example, restaurants have more than 500 reviews and events that have already closed. After that, we will use the above strategies for those collections.
 ## 7.	BUSINESS ANALYSIS
-Sentiment Analysis
+**Sentiment Analysis**
 
 
 We have aggregated the metric values for each restaurant and plotted the same against the number of restaurants. We have also added a filter based on the ranking of the restaurant. With this, we can see that Rank 1 to 1000 restaurants have a better sentiment analysis throughout the 3 variables. Therefore, we can conclude people are generally happier with lower ranked restaurants.
@@ -151,12 +155,12 @@ We try to find out reviewer's distribution in terms of number of reviews for mea
 Comparative Study Across Top Restaurant
 In the image above, we have the comparative study on the different restaurants in Singapore based on the review ratings from different sites. The graph as shown is ranked based on the top ranking of restaurants in Singapore. We have the top 5 restaurants for comparison.
 
+| Origin’s Grill | Chef Table | Alma by Juan | Shinji by Kanesaka | Positano Ristro |
+| ------------- | ------------- | ------------- | ------------- |   ------------- | 
+| Google | 13 | 67 | 59 | 91 | 127 |
+| TripAdvisor | 135 | 154 | 313 | 336 | 243 |
+| Zomato | 26 | 6 | 11 | 3 | 9 |
 
-
-	Origin’s Grill	Chef Table	Alma by Juan	Shinji by Kanesaka	Positano Ristro
-Google	13	67	59	91	127
-TripAdvisor	135	154	313	336	243
-Zomato	26	6	11	3	9
 This is a snapshot of the top 5 restaurants ranked by TripAdvisor. We can see that Zomato ratings are consistently lower than the ones from Google Reviews and TripAdvisor. This might be since Zomato has low number of reviews compared to the other two. Although, the number of reviews from Google is lower than TripAdvisor, the ratings for the top 5 restaurants are consistent with each other. In the Tableau storyboard, we have the whole list of restaurants ranked with the comparison of rating, sorted by TripAdvisor rankings.
 Through our shallow analysis, we have found out that the ratings for Google and TripAdvisor are similar while there is insufficient rating available in Zomato to make a proper analysis. As such, should a person be interested in the finding out the rating of restaurants, they can either go to TripAdvisor or Google Reviews to make an educated choice.
 The left image shows the nearby restaurant for each event. We have filtered based on the Start Date and End Date of the event and the list of events will be shown in the drop-down list. After selecting, the list of nearby restaurant will be shown on the map with the review counts on the graph below. This example shows that ‘Swee Choon Tim Sum’ is the most highly rated restaurant for this particular event.
