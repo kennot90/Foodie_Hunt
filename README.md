@@ -21,7 +21,7 @@ There are several questions we want to ask to satisfy our business goals, such a
 •	What is the reviewer contributor trends?
 ### 3.	OVERALL ARCHITECTURE
  
- 
+ ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/0.png)
 Figure – 1 Overall Architecture of Data Pipeline
 
 The system architecture shows the overall architecture of our data pipeline and analysis model. It is broadly classified into 4 tiers - Data Source, Data Acquisition, Data Management and Business Intelligence (BI). 
@@ -83,8 +83,11 @@ From the web structure of TripAdvisor, we found that there are 30 restaurants in
 EventBrite API
 Eventbrite has exposed an API that allow us to scrape data from their website and we have used the parameters as shown in (Appendix A4). As mentioned earlier, we have the longitude and latitude of each restaurant. As such, by placing these values into EventBrite API, we are able to obtain the nearby events for each restaurant during this 3-year time frame. 
 According to response values of API, we can only get the ‘Restaurant-Event’ relationship like Figure - 3. However, this relationship obtained will not be useful for our analysis. As such, we implemented a mapping function to remap the relationship as below.
-            
-                          Figure – 2 Original Relationship                                             Figure – 3 New Relationship
+
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/1.png)
+Figure – 2 Original Relationship
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/2.png)
+Figure – 3 New Relationship
 With the mapping function, we have obtained the following data which is to be directly imported into MongoDB as shown in (Appendix A5).
 Google Reviews
 Initially we tried to use BeautifulSoup to extract the information (user ratings and user votes) from the tags. However, we realized that Google has ‘cloaking’ mechanisms to misguide the scraper service from the browser-based content. To overcome this issue, we used Selenium to simulate an actual browser interaction with the webpages and mouse hover and clicks to mimic a human, create artificial delays (using system sleep) and retrieve the data. Though we scraped from the same site – Facebook and HungryGoWhere ratings as well, their count and impact on the list of restaurants were negligible and were ignored in the analysis stage.
@@ -107,27 +110,32 @@ Table 2 – Data Summary
 ### 6.1 Staging Database
 A staging database has been used to load data from website. After modifying and cleaning the data, it is placed in a production database. This facilitates restart ability and minimize the impact of scraping by keeping 1 copy in staging database. If the ETL fails, there is no need to scrape a 2nd time by restarting the ETL from the last successful timestamp. Another benefit is that it is very straightforward and convenient for distributed work. This is so, because the schema of staging database is based on the data structure after scraping, and for each website we have a specific collection to store. This means that any modification in the future will affect only a single collection, and there is no need for changing the data structure before inserting into the database.                 
 We have five collections in our staging database, namely ‘events’, ‘google_ratings’, ‘restaurants’, ‘reviews’ and ‘zomatos’, The detail schema is as shown below. 
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/3.png)
 ### 6.2 Extract-Load-Transform-Load (ELTL)                                                      
 The raw data was extracted from websites and dumped into the staging database (ELT). In the second step, it requires to be cleaned before transferring into the production database (ETL) is used. ETL is a data pipeline to collect data from various sources and transform the data according to our business analysis tasks. After which, it will load the data into the production database.  
 In case of downtime or loss of data, we have devised a procedure which makes our production database check on the last updated timestamp before performing the data scraping process. This way, we reduce the amount of data required to scrape, hereby reducing the down time. With this procedure, we improve the efficiency of scraping performance and reduce the amount of storage resources required. The next web scraping will start from the follow-up point of the last timestamp and our production database will match its own last timestamp so that the new extracting action will only consider the data after that date to append to pervious loaded data. For next ETL action, the procedure remains the same.
 We have coded a python script using package ‘pymongo’ to implement this and load formatted data into our production data. At the initial stage, we have loaded all data in staging date into our production database. However, the timestamp checking strategy will be used in every next action.
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/4.png)
 ### 6.3 Production Database
 Bases on our business analysis and insight discovery’s requirements later, the total schema diagram has been designed. There are four original collections which load data from the staging database directly, with different schema structures.
 For the collection ‘restaurants’, data from ‘restaurants’, ‘zomatos’ and ‘google_ratings’ is merged in staging database into one single collection. The collection ‘reviews’ in staging database has been split into two collections, namely ‘customers’ and ‘reviews’. No change is made to ‘events’ collection. It is another data layer for which same data structure is synchronized directly. There are another two collections named ‘mr_cuisines’ and ‘nlp_sentiment_analysis’. The ‘mr_cuisines’ collection, is obtained by refactoring the data in the original collections using MapReduce. The ‘nlp_sentiment_analysis’ collection is a result of the NLP Analysis which is discussed in next section.                                                                                                                                              
 **Embedded Data**
 Embedded document capture relationships between data by storing related data in a single document structure. As we know, MongoDB documents make it possible to embed document structures in a field or array within a document. These denormalized data models allow us to retrieve and manipulate related data in a single database operation during business analysis. 
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/5.png)
+Figure – 6 Embedded Data Model       
 We have used three embedded data models as below in our ‘restaurants’ collection: 
 1.	Embedded sub-document 1: Splitting original ‘address’ column into four parts, which are ‘street’, ‘extended_add’, ‘country’, ‘postal_code’, and combining them with original ‘postal_code’, ‘latitude’ and ‘longitude’ into this sub-document.
-2.	Embedded sub-document 2: Combing original ‘rating_atmosphere’,            Figure – 6 Embedded Data Model                              
+2.	Embedded sub-document 2: Combing original ‘rating_atmosphere’,                                  
  ‘rating_food’, ‘rating_service’ and ‘rating_value’ into this sub-document.
 3.	Embedded sub-document 3: As our original ‘meal’ value only contains six types value, which are ‘breakfast’, ‘lunch’, ‘dinner’, ‘after-hours’, ‘drinks’ and ‘brunch’. So, we used them to represent what type of meal the restaurant can offer, for example, if it has ‘breakfast’ in original ‘meal’ value, then this column will be ‘Y’, otherwise, it will be empty.
-Normalized Data
-As we can see from the previous total schema diagram, there are some relationships between different collections. Therefore, we                             
-have normalized our data to describe one-to-one or one-to many relationships using references between collections, which can provide more flexibility than embedding. For the detail relationships between them are as left.                                                                         Figure – 7 Normalized Data Model  
-Indexing
+**Normalized Data**
+As we can see from the previous total schema diagram, there are some relationships between different collections. Therefore, we         have normalized our data to describe one-to-one or one-to many relationships using references between collections, which can provide more flexibility than embedding. For the detail relationships between them are as left.     
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/6.png)
+Figure – 7 Normalized Data Model  
+**Indexing**
 Similar to SQL database, Indexes support the efficient execution of queries in MongoDB. Without index, MongoDB must perform a collection scan, like scanning every document in a collection, to select those documents that match the query statement, which will produce a huge amount of time consuming when the volume of data is very large. If an appropriate index exists for a query, MongoDB can use the index to limit the number of documents it must inspect. In addition, MongoDB can return sorted results by using the ordering in the index.
 Based on what we will query during doing business analysis in Tableau, several indexes as below have been created to support our efficient equality matches and range-based query operations.
- 
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/7.png)
 Figure – 8 Create Index
 ### 6.4 MapReduce and NLP
 **MapReduce**
@@ -146,13 +154,13 @@ Currently, there are more than 150 thousand and 200 thousand lines of record in 
 However, depending on our data retention requirements as well as our reporting and analytics needs, any data should not be dropped based on time, so we will not use pervious two strategies directly in our production database. A very import archiving step has been considered for it, which is restoring those data will not be used in different collections, for example, restaurants have more than 500 reviews and events that have already closed. After that, we will use the above strategies for those collections.
 ## 7.	BUSINESS ANALYSIS
 **Sentiment Analysis**
-
-
 We have aggregated the metric values for each restaurant and plotted the same against the number of restaurants. We have also added a filter based on the ranking of the restaurant. With this, we can see that Rank 1 to 1000 restaurants have a better sentiment analysis throughout the 3 variables. Therefore, we can conclude people are generally happier with lower ranked restaurants.
-                    Figure – 9 Sentiment Analysis
-Reviewer Contributions
-We try to find out reviewer's distribution in terms of number of reviews for measuring website’s popularity. The below plot is drawn between the review count v/s the reviewer’s count. We can find that close to 1700 distinct reviewers have posted only less than 10 reviews and there are around 800 odd reviewers who have posted 10-20 reviews. As the review count axis is scaled till 230 we can make out that there is at-least 1 reviewer who has continuously contributed towards the restaurant reviews over time.                                                                             Figure – 10 Reviewer Contributions
-Comparative Study Across Top Restaurant
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/8.png)
+Figure – 9 Sentiment Analysis
+**Reviewer Contributions**
+We try to find out reviewer's distribution in terms of number of reviews for measuring website’s popularity. The below plot is drawn between the review count v/s the reviewer’s count. We can find that close to 1700 distinct reviewers have posted only less than 10 reviews and there are around 800 odd reviewers who have posted 10-20 reviews. As the review count axis is scaled till 230 we can make out that there is at-least 1 reviewer who has continuously contributed towards the restaurant reviews over time.                         ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/9.png)                                                    
+Figure – 10 Reviewer Contributions
+**Comparative Study Across Top Restaurant**
 In the image above, we have the comparative study on the different restaurants in Singapore based on the review ratings from different sites. The graph as shown is ranked based on the top ranking of restaurants in Singapore. We have the top 5 restaurants for comparison.
 
 | Origin’s Grill | Chef Table | Alma by Juan | Shinji by Kanesaka | Positano Ristro |
