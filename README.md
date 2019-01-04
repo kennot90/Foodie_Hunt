@@ -133,6 +133,7 @@ We have used three embedded data models as below in our ‘restaurants’ collec
 As we can see from the previous total schema diagram, there are some relationships between different collections. Therefore, we         have normalized our data to describe one-to-one or one-to many relationships using references between collections, which can provide more flexibility than embedding. For the detail relationships between them are as left.
 
 ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/6.png)
+
 Figure – 7 Normalized Data Model  
 
 **Indexing**
