@@ -162,6 +162,7 @@ However, depending on our data retention requirements as well as our reporting a
 We have aggregated the metric values for each restaurant and plotted the same against the number of restaurants. We have also added a filter based on the ranking of the restaurant. With this, we can see that Rank 1 to 1000 restaurants have a better sentiment analysis throughout the 3 variables. Therefore, we can conclude people are generally happier with lower ranked restaurants.
 
 ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/8.png)
+
 Figure – 9 Sentiment Analysis
 **Reviewer Contributions**
 We try to find out reviewer's distribution in terms of number of reviews for measuring website’s popularity. The below plot is drawn between the review count v/s the reviewer’s count. We can find that close to 1700 distinct reviewers have posted only less than 10 reviews and there are around 800 odd reviewers who have posted 10-20 reviews. As the review count axis is scaled till 230 we can make out that there is at-least 1 reviewer who has continuously contributed towards the restaurant reviews over time.   
