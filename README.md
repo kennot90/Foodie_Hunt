@@ -66,11 +66,12 @@ The restaurant list consolidated from (4) is used to collect user ratings from p
 For scraping restaurants from Zomato, we assume that the overall rating displayed is a true reflection of customer’s individual rating. There are restaurants listed on Zomato, which have no customer reviews or ratings at all, but still boasts of an overall rating.
 ## 5.	WEBSCRAPING METHODS
 ### 5.1 Web Scraping Techniques
-Selenium 			– Google Reviews
-Beautiful Soup & Requests 	– Trip Advisor, OneMap API, EventBrite API, Zomato
+|   |  | 
+| Selenium | – Google Reviews | 
+| Beautiful Soup & Requests | – Trip Advisor, OneMap API, EventBrite API, Zomato | 
 ### 5.2 Web Scraping Details
 
-** TripAdvisor **
+#### TripAdvisor
 
 From the web structure of TripAdvisor, we found that there are 30 restaurants in each page and 20 reviews in each page for every restaurant, and there is one customer for a review. Based on this structure, the scraping procedure follows as below:
 1)	Connect to Raw Database in MongoDB with package ‘pymongo’
