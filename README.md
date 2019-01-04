@@ -160,10 +160,13 @@ However, depending on our data retention requirements as well as our reporting a
 ## 7.	BUSINESS ANALYSIS
 **Sentiment Analysis**
 We have aggregated the metric values for each restaurant and plotted the same against the number of restaurants. We have also added a filter based on the ranking of the restaurant. With this, we can see that Rank 1 to 1000 restaurants have a better sentiment analysis throughout the 3 variables. Therefore, we can conclude people are generally happier with lower ranked restaurants.
+
 ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/8.png)
 Figure – 9 Sentiment Analysis
 **Reviewer Contributions**
-We try to find out reviewer's distribution in terms of number of reviews for measuring website’s popularity. The below plot is drawn between the review count v/s the reviewer’s count. We can find that close to 1700 distinct reviewers have posted only less than 10 reviews and there are around 800 odd reviewers who have posted 10-20 reviews. As the review count axis is scaled till 230 we can make out that there is at-least 1 reviewer who has continuously contributed towards the restaurant reviews over time.                         ![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/9.png)                                                    
+We try to find out reviewer's distribution in terms of number of reviews for measuring website’s popularity. The below plot is drawn between the review count v/s the reviewer’s count. We can find that close to 1700 distinct reviewers have posted only less than 10 reviews and there are around 800 odd reviewers who have posted 10-20 reviews. As the review count axis is scaled till 230 we can make out that there is at-least 1 reviewer who has continuously contributed towards the restaurant reviews over time.   
+
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/9.png)                                                    
 Figure – 10 Reviewer Contributions
 **Comparative Study Across Top Restaurant**
 In the image above, we have the comparative study on the different restaurants in Singapore based on the review ratings from different sites. The graph as shown is ranked based on the top ranking of restaurants in Singapore. We have the top 5 restaurants for comparison.
@@ -175,11 +178,17 @@ In the image above, we have the comparative study on the different restaurants i
 | Zomato | 26 | 6 | 11 | 3 | 9 |
 
 This is a snapshot of the top 5 restaurants ranked by TripAdvisor. We can see that Zomato ratings are consistently lower than the ones from Google Reviews and TripAdvisor. This might be since Zomato has low number of reviews compared to the other two. Although, the number of reviews from Google is lower than TripAdvisor, the ratings for the top 5 restaurants are consistent with each other. In the Tableau storyboard, we have the whole list of restaurants ranked with the comparison of rating, sorted by TripAdvisor rankings.
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/10.png)   
 Through our shallow analysis, we have found out that the ratings for Google and TripAdvisor are similar while there is insufficient rating available in Zomato to make a proper analysis. As such, should a person be interested in the finding out the rating of restaurants, they can either go to TripAdvisor or Google Reviews to make an educated choice.
-The left image shows the nearby restaurant for each event. We have filtered based on the Start Date and End Date of the event and the list of events will be shown in the drop-down list. After selecting, the list of nearby restaurant will be shown on the map with the review counts on the graph below. This example shows that ‘Swee Choon Tim Sum’ is the most highly rated restaurant for this particular event.
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/11.png)   
+The above image shows the nearby restaurant for each event. We have filtered based on the Start Date and End Date of the event and the list of events will be shown in the drop-down list. After selecting, the list of nearby restaurant will be shown on the map with the review counts on the graph below. This example shows that ‘Swee Choon Tim Sum’ is the most highly rated restaurant for this particular event.
 The above image shows a map that shows the location of the restaurants and are filtered based on cuisines. On the right, we have filters that allows the user to choose the range of Rankings desired as well as the type of food based on cuisines. 
 By clicking on the point, it showcases the address as well as the restaurant location with the TripAdvisor and Google Rating. In this case, we have chosen Alcohol to be the primary concern. With this, restaurants with the alcohol tag will pop on the map. Click on the point will showcase the name of the restaurant as well as the address, followed by the ratings. 
-The main purpose of this page is to allow users to identify places to eat based on possible dietary restriction. As such, we have added “Gluten Free” & “Vegetarian Options” into this selection. In addition, we believe that Singapore’s night life is bustling.                           Figure – 13 Top Places Based on Cuisines
+The main purpose of this page is to allow users to identify places to eat based on possible dietary restriction. As such, we have added “Gluten Free” & “Vegetarian Options” into this selection. In addition, we believe that Singapore’s night life is bustling.
+
+![alt text](https://github.com/rickyken90/Foodie_Hunt/blob/master/Images/12.png) 
+Figure – 13 Top Places Based on Cuisines
+
 As such, we have included in the alcohol section which covers the pubs and bars in Singapore. We believe that this will aid the users tremendously in for easy information retrieval based on cuisine. 
 Similarly, to the previous image, we present a map with the list of restaurants based on Nationality type. As we are a metropolitan city, we have lots of restaurant in Singapore of different cuisine. As such many of these restaurants have multiple Nationality tags. In addition, the list is long. As such, we have curated the list and only showcase those that are more prevalent in Singapore. 
  We have the filters based on the ranking of the restaurants as well as the Nationality of the Cuisines. In the example as shown above, we are interested in Chinese Food. By removing all except the Chinese tag, we are able to list out the restaurants around the city area. By clicking on the points, it will similarly showcase the name of the restaurant as well as the address followed by the ratings from Google and TripAdvisor.
