@@ -200,7 +200,11 @@ As managing continuous operation of the restaurant is a difficult business, so i
 Of course, our story board can further be enhanced to get better insights by expanding the database, coming with newer metrics and a better user experience. We could also expand the scope to analyze for different countries, currently with the interest of time it’s limited to only Singapore.
 ## 9.	REFERENCES
 [1] https://www.tripadvisor.com.sg/Tourism-g294262-Singapore-Vacations.html
+
 [2] https://www.eventbriteapi.com/
+
 [3] http://t-redactyl.io/blog/2017/04/using-vader-to-handle-sentiment-analysis-with-social-media-text.html
+
 [4] https://docs.mongodb.com/manual/core/data-modeling-introduction/
+
 [5] http://comp.social.gatech.edu/papers/icwsm14.vader.hutto.pdf
