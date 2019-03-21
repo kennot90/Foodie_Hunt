@@ -10,18 +10,20 @@ def update_tags(ref, new_tag):
     events_test.update_one({'_id': ref}, {'$push': {'rest_ids': new_tag}})
     print("updated!")
 
-
+#EventBrite Scraper
 def eventbrite_scrap(url, events, search, headerapi_key, location, latitude_term, lat, longtitude_term, long, end_date, start_date):
     data = {}
     data['event'] = []
 
+    #Creates the URL for Request to call. This is based on the key words that is available in eventbrite. The aim is to obtain
+    #the number of results obtain
     target = (url + events + search + headerapi_key + location
               + latitude_term + lat
               + longtitude_term + long + end_date + start_date)
     response = requests.get(target)
     z = response.json()
-    page_count = z['pagination']['page_count']
-    for page in range(0, int(page_count)):
+    page_count = z['pagination']['page_count'] #obtain the number of pages to allow the code to paginate.
+    for page in range(0, int(page_count)): #Looping through the pages to obtain call the request again to perform scraping.
         page_2 = page + 1
         target = (url + events + search + headerapi_key + location
                   + latitude_term + lat
@@ -32,16 +34,21 @@ def eventbrite_scrap(url, events, search, headerapi_key, location, latitude_term
         response = requests.get(target)
         z = response.json()
 
-        page_size = len(z["events"])
+        page_size = len(z["events"]) 
+        #obtain the number of events in each page. This pertains to the last page where they might have
+        #less than max number of events available.
 
+        
         for count in range(0, page_size):
             # print(count)
+            #We are not interested in certain categories so they are removed.
             if (z["events"][count]['online_event'] == False) and \
                     (z["events"][count]['category_id'] != str(120)) and \
                     (z["events"][count]['category_id'] != str(199)) and \
                     (z["events"][count]['category_id'] != str(114)) and \
                     (z["events"][count]['category_id'] != str(111)):
 
+                 #To Obtain the description of the text
                 if z["events"][count]["description"]["text"] is not None:
                     temp_dsc = re.sub(r'\r\n', '', z["events"][count]["description"]["text"])
                     temp_dsc = re.sub(r'\n', '', temp_dsc)
@@ -75,7 +82,8 @@ def eventbrite_scrap(url, events, search, headerapi_key, location, latitude_term
 
     return data
 
-
+#converting the categories which are in number based to the result.
+#This is more like Data Cleaning as we are not interested in the numbers but the category itself.
 def get_category_event(category_id):
     if (category_id == str(103)):
         result = "Music"
@@ -122,7 +130,7 @@ def get_category_event(category_id):
     return result
 
 
-headerapi_key = '/?token=W7IWZN265WQ23DVF5KM6'
+headerapi_key = 'HIDDEN'
 events = '/events'
 search = '/search'
 url = 'https://www.eventbriteapi.com/v3'
@@ -133,6 +141,8 @@ longtitude_term = '&location.longitude='
 end_date = '&start_date.range_end=2018-12-31T23%3A59%3A59&'
 start_date = '&start_date.range_start=2013-01-01T07%3A00%3A00'
 
+
+##This section showcase how the data is to be placed in the MongoDB
 client = MongoClient()
 db = client['charles_ca']
 restaurant_collection = db.restaurants
