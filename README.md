@@ -12,7 +12,7 @@ After which, I had done a mapredeuce to aggregate the results based on the resta
 
 The lontitude and Latitude are obtain via ONEMAP SG. 
 
-My Main role is connecting the MongoDB via a connector to Tableau and working on the visualizing the results.
+After which, I connect the MongoDB via a connector to Tableau and working on the visualizing the results which can be seen in the TWB file.
 
 
 ## 1.INTRODUCTION
