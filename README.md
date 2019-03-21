@@ -1,5 +1,20 @@
 # Foodie_Hunt
 
+## 0.TLDR (If you are not interested in reading the report below.)
+
+This report is done by a team of 4 focusing on 
+Data Source, Data Acquisition, Data Management and Business Intelligence (BI). 
+
+Roles I had done
+
+I had scraped EventBrite API to obtain the events around Singapore based ont the Date, Lontitude and Latitude. 
+After which, I had done a mapredeuce to aggregate the results based on the restaurants scraped by my teammates through Zomato and Tripadvisor.
+
+The lontitude and Latitude are obtain via ONEMAP SG. 
+
+My Main role is connecting the MongoDB via a connector to Tableau and working on the visualizing the results.
+
+
 ## 1.INTRODUCTION
 Singapore has a diverse population and presents a unique massing of different cultures from all over the world, each contributing their style to the world of food. For Singaporeans, it has become a national pastime to venture out to the different corners of the island to discover the best food. This well-known trademark has also inspired the world travelers around the world to come to Singapore to experience these delicacies. We aim to assist these travelers to find the best food in Singapore.
 
